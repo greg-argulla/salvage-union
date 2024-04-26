@@ -1,0 +1,12 @@
+{
+  "name": "Salvage Union",
+  "version": "1.0.0",
+  "manifest_version": 1,
+  "action": {
+    "title": "Salvage Union",
+    "icon": "/icon.svg",
+    "popover": "/",
+    "height": 540,
+    "width": 500
+  }
+}
