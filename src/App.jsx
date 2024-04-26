@@ -33,7 +33,7 @@ const SALVAGER = () => {
       TP: 0,
       SP: 0,
       EP: 0,
-      HEAT: 0,
+      HT: 0,
     },
     abilities: [],
     mechs: [],
@@ -1335,10 +1335,10 @@ function App() {
             width: 20,
             color: "cyan",
           }}
-          value={player.stats.AP}
+          value={player.stats.EP}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.stats.AP = evt.target.value;
+            playerGet.stats.EP = evt.target.value;
             updatePlayer(playerGet);
           }}
         />
@@ -1350,10 +1350,10 @@ function App() {
             width: 20,
             color: "orange",
           }}
-          value={player.stats.AP}
+          value={player.stats.HT}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.stats.AP = evt.target.value;
+            playerGet.stats.HT = evt.target.value;
             updatePlayer(playerGet);
           }}
         />
