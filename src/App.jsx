@@ -1156,7 +1156,7 @@ function App() {
               display: "inline-block",
               fontSize: 12,
               color: "orange",
-              width: 150,
+              width: 120,
               textAlign: "center",
               padding: 4,
               whiteSpace: "nowrap",
