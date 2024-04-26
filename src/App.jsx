@@ -1331,10 +1331,10 @@ function App() {
             width: 140,
             color: "white",
           }}
-          value={player.details.codename}
+          value={player.details.callsign}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.details.codename = evt.target.value;
+            playerGet.details.callsign = evt.target.value;
             updatePlayer(playerGet);
           }}
         />
