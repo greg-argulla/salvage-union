@@ -190,6 +190,22 @@ function App() {
     }
   }, [isOBRReady]);
 
+  const sendAbility = (ability) => {
+    const skillData = {
+      skillName: ability.name ? ability.name : "Blank skill",
+      info: ability.info,
+      detail: ability.detail,
+      characterName: player.details.callsign,
+      userId: id,
+      username: name,
+      characterID: player.id,
+      id: Date.now(),
+    };
+    OBR.room.setMetadata({
+      "salvage.union.extension/sendskill": skillData,
+    });
+  };
+
   const addAbility = (index, isMech) => {
     const playerGet = { ...player };
     playerGet.abilities[index].items.push({
@@ -1621,7 +1637,7 @@ function App() {
         className="scrollable-container"
         style={{
           overflow: "scroll",
-          height: 450,
+          height: 480,
           marginTop: 10,
         }}
       >
