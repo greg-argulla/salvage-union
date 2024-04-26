@@ -1174,7 +1174,47 @@ function App() {
               color: "Red",
             }}
             readOnly={true}
-            value={data.stats.hp}
+            value={data.stats.HP}
+          />
+          <Text>AP:</Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "violet",
+            }}
+            readOnly={true}
+            value={data.stats.AP}
+          />
+          <Text>SP:</Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "lightgrey",
+            }}
+            readOnly={true}
+            value={data.stats.SP}
+          />
+          <Text>EP:</Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "cyan",
+            }}
+            readOnly={true}
+            value={data.stats.EP}
+          />
+          <Text>HT:</Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "orange",
+            }}
+            readOnly={true}
+            value={data.stats.HT}
           />
           <button
             className="button"
