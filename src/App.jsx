@@ -73,7 +73,7 @@ function App() {
   const [playerList, setPlayerList] = useState([]);
 
   const createPlayerList = async (metadata) => {
-    const metadataGet = metadata["salvage.union.extension/metadata"];
+    const metadataGet = metadata["salvage.union.character/metadata"];
     const playerListGet = [];
     const keys = Object.keys(metadataGet);
     keys.forEach((key) => {
@@ -101,12 +101,12 @@ function App() {
   const savePlayer = async () => {
     if (player) {
       const metadataData = await OBR.scene.getMetadata();
-      const metadata = metadataData["salvage.union.extension/metadata"];
+      const metadata = metadataData["salvage.union.character/metadata"];
       let metadataChange = { ...metadata };
       metadataChange[player.id] = { ...player, lastEdit: id };
 
       OBR.scene.setMetadata({
-        "salvage.union.extension/metadata": metadataChange,
+        "salvage.union.character/metadata": metadataChange,
       });
       setTimeoutID(null);
     }
@@ -114,14 +114,14 @@ function App() {
 
   const removePlayer = async (id) => {
     const metadataData = await OBR.scene.getMetadata();
-    const metadata = metadataData["salvage.union.extension/metadata"];
+    const metadata = metadataData["salvage.union.character/metadata"];
     let metadataChange = { ...metadata };
 
     if (confirm("Are you sure you want to delete the character?") == true) {
       delete metadataChange[id];
 
       OBR.scene.setMetadata({
-        "salvage.union.extension/metadata": metadataChange,
+        "salvage.union.character/metadata": metadataChange,
       });
     }
   };
@@ -132,7 +132,7 @@ function App() {
         if (ready) {
           const metadata = await OBR.scene.getMetadata();
 
-          if (metadata["salvage.union.extension/metadata"]) {
+          if (metadata["salvage.union.character/metadata"]) {
             const playerListGet = await createPlayerList(metadata);
             setPlayerList(playerListGet);
           }
@@ -155,7 +155,7 @@ function App() {
       if (await OBR.scene.isReady()) {
         const metadata = await OBR.scene.getMetadata();
 
-        if (metadata["salvage.union.extension/metadata"]) {
+        if (metadata["salvage.union.character/metadata"]) {
           const playerListGet = await createPlayerList(metadata);
           setPlayerList(playerListGet);
         }
@@ -202,7 +202,7 @@ function App() {
       id: Date.now(),
     };
     OBR.room.setMetadata({
-      "salvage.union.extension/sendskill": skillData,
+      "salvage.union.character/sendskill": skillData,
     });
   };
 
@@ -1269,12 +1269,12 @@ function App() {
   const addPlayer = async () => {
     const playerGet = SALVAGER();
     const metadataData = await OBR.scene.getMetadata();
-    const metadata = metadataData["salvage.union.extension/metadata"];
+    const metadata = metadataData["salvage.union.character/metadata"];
     let metadataChange = { ...metadata };
     metadataChange[playerGet.id] = playerGet;
 
     OBR.scene.setMetadata({
-      "salvage.union.extension/metadata": metadataChange,
+      "salvage.union.character/metadata": metadataChange,
     });
   };
 
