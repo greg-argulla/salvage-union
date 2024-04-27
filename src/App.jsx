@@ -1,8 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import OBR from "@owlbear-rodeo/sdk";
-import landingBG from "./assets/bg.jpg";
-import refresh from "./assets/refresh.png";
 import "./App.css";
 
 const Text = (props) => {
@@ -1098,8 +1096,7 @@ function App() {
     return (
       <div
         style={{
-          backgroundImage: `url(${landingBG})`,
-          backgroundSize: "contain",
+          background: "#444",
           height: 540,
           width: 550,
           overflow: "hidden",
