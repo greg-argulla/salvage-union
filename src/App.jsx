@@ -1177,7 +1177,7 @@ function App() {
               textOverflow: "ellipsis",
             }}
           >
-            {data.details.codename}
+            {data.details.callsign}
           </span>
           <Text>HP:</Text>
           <input
