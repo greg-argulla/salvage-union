@@ -8,9 +8,10 @@ const Text = (props) => {
   return <span className="outline">{children}</span>;
 };
 
-const SALVAGER = () => {
+const SALVAGER = (isGM) => {
   return {
     id: Date.now(),
+    isGM: isGM,
     details: {
       callsign: "",
       class: "",
@@ -1263,8 +1264,8 @@ function App() {
     );
   };
 
-  const addPlayer = async () => {
-    const playerGet = SALVAGER();
+  const addPlayer = async (isGM) => {
+    const playerGet = SALVAGER(isGM);
     const metadataData = await OBR.scene.getMetadata();
     const metadata = metadataData["salvage.union.character/metadata"];
     let metadataChange = { ...metadata };
@@ -1292,17 +1293,51 @@ function App() {
         </div>
         <hr></hr>
         {playerList.map((item, index) => {
-          return playerItem(item, index);
+          if (!item.isGM) {
+            return playerItem(item, index);
+          }
+          return "";
         })}
+
+        {role === "GM" && (
+          <div style={{ marginTop: 10, color: "white" }} className="outline">
+            GM Characters
+            <hr></hr>
+            {playerList.map((item, index) => {
+              if (item.isGM) {
+                return playerItem(item, index);
+              }
+              return "";
+            })}
+          </div>
+        )}
+
         <button
           className="button"
           style={{ fontWeight: "bolder", width: 80, float: "right" }}
           onClick={() => {
-            addPlayer();
+            addPlayer(false);
           }}
         >
           Add Character
         </button>
+
+        {role === "GM" && (
+          <button
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 100,
+              float: "right",
+              marginRight: 4,
+            }}
+            onClick={() => {
+              addPlayer(true);
+            }}
+          >
+            Add GM Character
+          </button>
+        )}
       </div>
     );
   };
