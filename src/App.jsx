@@ -1408,10 +1408,10 @@ function App() {
             width: 20,
             color: "lightgrey",
           }}
-          value={player.stats.AP}
+          value={player.stats.SP}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.stats.AP = evt.target.value;
+            playerGet.stats.SP = evt.target.value;
             updatePlayer(playerGet);
           }}
         />
