@@ -2520,7 +2520,6 @@ function App() {
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
             alignItems: "center",
             justifyContent: "space-between",
           }}
