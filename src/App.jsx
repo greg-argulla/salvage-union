@@ -45,6 +45,30 @@ const SALVAGER = (isGM) => {
   };
 };
 
+const CRAWLER = () => {
+  return {
+    id: Date.now(),
+    isCrawler: true,
+    details: {
+      name: "",
+      type: "",
+      techLevel: "",
+      upkeep: 0,
+      upgrade: 0,
+    },
+    stats: {
+      SP: 0,
+      T1: 0,
+      T2: 0,
+      T3: 0,
+      T4: 0,
+      T5: 0,
+      T6: 0,
+    },
+    abilities: [],
+  };
+};
+
 const MECH = () => {
   return {
     id: Date.now(),
@@ -1310,8 +1334,123 @@ function App() {
     );
   };
 
+  const crawlerItem = (data, index) => {
+    return (
+      <div key={index}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5,
+            marginTop: 5,
+          }}
+        >
+          <Text>Crawler: </Text>
+          <span
+            className="outline"
+            style={{
+              display: "inline-block",
+              fontSize: 12,
+              color: "orange",
+              width: 120,
+              textAlign: "center",
+              padding: 4,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {data.details.callsign}
+          </span>
+          <Text>Tech:</Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "Red",
+            }}
+            readOnly={true}
+            value={data.details.techLevel}
+          />
+          <Text>Upkeep:</Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "violet",
+            }}
+            readOnly={true}
+            value={data.stats.upkeep}
+          />
+          <Text>Upgrade:</Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "lightgrey",
+            }}
+            readOnly={true}
+            value={data.stats.upgrade}
+          />
+          <Text>SP:</Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "orange",
+            }}
+            readOnly={true}
+            value={data.stats.SP}
+          />
+          <button
+            className="button"
+            style={{
+              width: 96,
+              padding: 5,
+              marginRight: 4,
+              marginLeft: "auto",
+            }}
+            onClick={() => {
+              setPlayer(data);
+              setTab("player");
+            }}
+          >
+            Open
+          </button>
+          <button
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 25,
+              color: "darkred",
+            }}
+            onClick={() => {
+              removePlayer(data.id);
+            }}
+          >
+            ✖
+          </button>
+        </div>
+        <hr />
+      </div>
+    );
+  };
+
   const addPlayer = async (isGM) => {
     const playerGet = SALVAGER(isGM);
+    const metadataData = await OBR.scene.getMetadata();
+    const metadata = metadataData["salvage.union.character/metadata"];
+    let metadataChange = { ...metadata };
+    metadataChange[playerGet.id] = playerGet;
+
+    OBR.scene.setMetadata({
+      "salvage.union.character/metadata": metadataChange,
+    });
+  };
+
+  const addCrawler = async () => {
+    const playerGet = CRAWLER();
     const metadataData = await OBR.scene.getMetadata();
     const metadata = metadataData["salvage.union.character/metadata"];
     let metadataChange = { ...metadata };
@@ -1334,30 +1473,53 @@ function App() {
           border: "1px solid #222",
         }}
       >
-        <div className="outline" style={{ fontSize: 14, color: "lightgrey" }}>
+        <div
+          className="outline"
+          style={{
+            fontSize: 14,
+            color: "lightgrey",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           Salvage Union
         </div>
         <hr></hr>
-        {playerList.map((item, index) => {
-          if (!item.isGM) {
-            return playerItem(item, index);
-          }
-          return "";
-        })}
+
+        <div style={{ marginTop: 10, color: "white" }} className="outline">
+          Crawlers
+          <hr></hr>
+          {playerList.map((item, index) => {
+            if (item.isCrawler) {
+              return crawlerItem(item, index);
+            }
+            return "";
+          })}
+        </div>
+
+        <div style={{ marginTop: 10, color: "white" }} className="outline">
+          Pilots
+          <hr></hr>
+          {playerList.map((item, index) => {
+            if (!item.isGM && !item.isCrawler) {
+              return playerItem(item, index);
+            }
+            return "";
+          })}
+        </div>
 
         {role === "GM" && (
           <div style={{ marginTop: 10, color: "white" }} className="outline">
             GM Characters
             <hr></hr>
             {playerList.map((item, index) => {
-              if (item.isGM) {
+              if (item.isGM && !item.isCrawler) {
                 return playerItem(item, index);
               }
               return "";
             })}
           </div>
         )}
-
         <button
           className="button"
           style={{ fontWeight: "bolder", width: 80, float: "right" }}
@@ -1365,9 +1527,22 @@ function App() {
             addPlayer(false);
           }}
         >
-          Add Character
+          Add Pilot
         </button>
-
+        <button
+          className="button"
+          style={{
+            fontWeight: "bolder",
+            width: 80,
+            float: "right",
+            marginRight: 4,
+          }}
+          onClick={() => {
+            addCrawler();
+          }}
+        >
+          Add Crawler
+        </button>
         {role === "GM" && (
           <button
             className="button"
@@ -1730,12 +1905,12 @@ function App() {
           type="number"
           style={{
             width: 20,
-            color: "violet",
+            color: "white",
           }}
           value={player.stats.T1}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.scrap.T1 = evt.target.value;
+            playerGet.stats.T1 = evt.target.value;
             updatePlayer(playerGet);
           }}
         />
@@ -1745,12 +1920,12 @@ function App() {
           type="number"
           style={{
             width: 20,
-            color: "violet",
+            color: "white",
           }}
           value={player.stats.T2}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.scrap.T2 = evt.target.value;
+            playerGet.stats.T2 = evt.target.value;
             updatePlayer(playerGet);
           }}
         />
@@ -1761,12 +1936,12 @@ function App() {
           type="number"
           style={{
             width: 20,
-            color: "violet",
+            color: "white",
           }}
           value={player.stats.T3}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.scrap.T3 = evt.target.value;
+            playerGet.stats.T3 = evt.target.value;
             updatePlayer(playerGet);
           }}
         />
@@ -1776,12 +1951,12 @@ function App() {
           type="number"
           style={{
             width: 20,
-            color: "violet",
+            color: "white",
           }}
           value={player.stats.T4}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.scrap.T4 = evt.target.value;
+            playerGet.stats.T4 = evt.target.value;
             updatePlayer(playerGet);
           }}
         />
@@ -1791,12 +1966,12 @@ function App() {
           type="number"
           style={{
             width: 20,
-            color: "yellow",
+            color: "white",
           }}
           value={player.stats.T5}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.scrap.T5 = evt.target.value;
+            playerGet.stats.T5 = evt.target.value;
             updatePlayer(playerGet);
           }}
         />
@@ -1806,12 +1981,12 @@ function App() {
           type="number"
           style={{
             width: 20,
-            color: "violet",
+            color: "white",
           }}
           value={player.stats.T6}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.scrap.T6 = evt.target.value;
+            playerGet.stats.T6 = evt.target.value;
             updatePlayer(playerGet);
           }}
         />
@@ -1917,8 +2092,8 @@ function App() {
       }}
     >
       {tab === "playerList" && renderPlayerList()}
-      {tab !== "playerList" && renderInfo()}
-      {tab !== "playerList" && renderAbilities()}
+      {tab === "player" && renderInfo()}
+      {tab === "player" && renderAbilities()}
     </div>
   );
 }
