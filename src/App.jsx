@@ -647,7 +647,7 @@ function App() {
               </>
             )}
             {items.map((item, itemIndex) => {
-              return abilityInstance(item, index, itemIndex);
+              return abilityInstance(item, index, itemIndex, data.isMech);
             })}
           </>
         )}
@@ -1100,7 +1100,7 @@ function App() {
     );
   };
 
-  const abilityInstance = (data, index, itemIndex) => {
+  const abilityInstance = (data, index, itemIndex, isMech) => {
     let propsString = JSON.stringify(data);
     const imageURL = getImage(propsString);
 
@@ -1136,6 +1136,7 @@ function App() {
                 ""
               )}
             </div>
+
             <div>
               <button
                 className="button"
@@ -1151,6 +1152,35 @@ function App() {
               >
                 Send
               </button>
+              {isMech && (
+                <button
+                  className="button"
+                  style={{
+                    fontSize: 10,
+                    width: 38,
+                    float: "right",
+                    marginRight: 8,
+                    textTransform: "capitalize",
+                    backgroundColor: player.abilities[index].items[itemIndex]
+                      .online
+                      ? "darkred"
+                      : "green",
+                    color: player.abilities[index].items[itemIndex].online
+                      ? "white"
+                      : "white",
+                  }}
+                  onClick={() => {
+                    const playerGet = { ...player };
+                    playerGet.abilities[index].items[itemIndex].online =
+                      !playerGet.abilities[index].items[itemIndex].online;
+                    updatePlayer(playerGet);
+                  }}
+                >
+                  {!player.abilities[index].items[itemIndex].online
+                    ? "Online"
+                    : "Offline"}
+                </button>
+              )}
             </div>
           </div>
 
