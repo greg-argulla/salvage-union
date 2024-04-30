@@ -55,6 +55,8 @@ const CRAWLER = () => {
       techLevel: "",
       upkeep: 0,
       upgrade: 0,
+      avatar: "",
+      maxLevel: "",
     },
     stats: {
       SP: 0,
@@ -64,6 +66,16 @@ const CRAWLER = () => {
       T4: 0,
       T5: 0,
       T6: 0,
+      commandBay: false,
+      mechBay: false,
+      storageBay: false,
+      arnamentBay: false,
+      craftingBay: false,
+      tradingBay: false,
+      medBay: false,
+      pilotBay: false,
+      armory: false,
+      catina: false,
     },
     abilities: [],
   };
@@ -155,6 +167,14 @@ function App() {
     }
   };
 
+  function download(content, fileName, contentType) {
+    var a = document.createElement("a");
+    var file = new Blob([content], { type: contentType });
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+  }
+
   useEffect(() => {
     OBR.onReady(async () => {
       OBR.scene.onReadyChange(async (ready) => {
@@ -163,6 +183,11 @@ function App() {
 
           if (metadata["salvage.union.character/metadata"]) {
             const playerListGet = await createPlayerList(metadata);
+            // download(
+            //   JSON.stringify(playerListGet),
+            //   "salvage-union.txt",
+            //   "text/plain"
+            // );
             setPlayerList(playerListGet);
           }
 
@@ -1353,7 +1378,7 @@ function App() {
               display: "inline-block",
               fontSize: 12,
               color: "orange",
-              width: 120,
+              width: 200,
               textAlign: "center",
               padding: 4,
               whiteSpace: "nowrap",
@@ -1361,7 +1386,7 @@ function App() {
               textOverflow: "ellipsis",
             }}
           >
-            {data.details.callsign}
+            {data.details.name}
           </span>
           <Text>Tech:</Text>
           <input
@@ -1378,20 +1403,10 @@ function App() {
             className="input-stat"
             style={{
               width: 20,
-              color: "violet",
+              color: "cyan",
             }}
             readOnly={true}
-            value={data.stats.upkeep}
-          />
-          <Text>Upgrade:</Text>
-          <input
-            className="input-stat"
-            style={{
-              width: 20,
-              color: "lightgrey",
-            }}
-            readOnly={true}
-            value={data.stats.upgrade}
+            value={data.details.upkeep}
           />
           <Text>SP:</Text>
           <input
@@ -1487,7 +1502,7 @@ function App() {
         <hr></hr>
 
         <div style={{ marginTop: 10, color: "white" }} className="outline">
-          Crawlers
+          Union Crawler
           <hr></hr>
           {playerList.map((item, index) => {
             if (item.isCrawler) {
@@ -1666,6 +1681,86 @@ function App() {
             updatePlayer(playerGet);
           }}
         />
+        <button
+          className="button"
+          style={{
+            width: 35,
+            color: "red",
+            marginLeft: "auto",
+          }}
+          onClick={() => {
+            setPlayer(null);
+            setTab("playerList");
+          }}
+        >
+          Close
+        </button>
+      </div>
+    );
+  };
+
+  const renderCrawlerInfo = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          paddingLeft: 15,
+          paddingRight: 15,
+          paddingTop: 15,
+          alignItems: "center",
+        }}
+      >
+        <span className="outline" style={{ fontSize: 11 }}>
+          Union Name:
+        </span>
+        <input
+          className="input-stat"
+          style={{
+            width: 140,
+            color: "white",
+          }}
+          value={player.details.name}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.details.name = evt.target.value;
+            updatePlayer(playerGet);
+          }}
+        />
+
+        <span className="outline" style={{ marginRight: 4, fontSize: 11 }}>
+          Type:
+        </span>
+        <input
+          className="input-stat"
+          style={{
+            width: 120,
+            color: "white",
+          }}
+          value={player.details.type}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.details.type = evt.target.value;
+            updatePlayer(playerGet);
+          }}
+        />
+
+        <span className="dice-result">SP:</span>
+        <input
+          className="input-stat"
+          type="number"
+          style={{
+            width: 20,
+            color: "orange",
+          }}
+          value={player.stats.AP}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.stats.AP = evt.target.value;
+            updatePlayer(playerGet);
+          }}
+        />
+
         <button
           className="button"
           style={{
@@ -1884,7 +1979,7 @@ function App() {
     );
   };
 
-  const renderDetails4 = () => {
+  const renderScraps = () => {
     return (
       <div
         style={{
@@ -1994,7 +2089,307 @@ function App() {
     );
   };
 
-  const renderAbilities = () => {
+  const bayTextWidth = 75;
+
+  const renderBay1 = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          paddingLeft: 15,
+          paddingRight: 15,
+          paddingTop: 5,
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span className="outline" style={{ width: bayTextWidth, fontSize: 11 }}>
+          Command Bay:
+        </span>
+        <button
+          className="button"
+          style={{
+            fontSize: 10,
+            width: 38,
+            marginRight: 8,
+            textTransform: "capitalize",
+            backgroundColor: player.stats.commandBay ? "darkred" : "green",
+            color: player.stats.commandBay ? "white" : "white",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.commandBay = !player.stats.commandBay;
+            updatePlayer(playerGet);
+          }}
+        >
+          {!player.stats.commandBay ? "Online" : "Offline"}
+        </button>
+
+        <span className="outline" style={{ width: bayTextWidth, fontSize: 11 }}>
+          Mech Bay:
+        </span>
+        <button
+          className="button"
+          style={{
+            fontSize: 10,
+            width: 38,
+            marginRight: 8,
+            textTransform: "capitalize",
+            backgroundColor: player.stats.mechBay ? "darkred" : "green",
+            color: player.stats.mechBay ? "white" : "white",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.mechBay = !player.stats.mechBay;
+            updatePlayer(playerGet);
+          }}
+        >
+          {!player.stats.mechBay ? "Online" : "Offline"}
+        </button>
+      </div>
+    );
+  };
+
+  const renderBay2 = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          paddingLeft: 15,
+          paddingRight: 15,
+          paddingTop: 5,
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span className="outline" style={{ width: bayTextWidth, fontSize: 11 }}>
+          Storage Bay:
+        </span>
+        <button
+          className="button"
+          style={{
+            fontSize: 10,
+            width: 38,
+            marginRight: 8,
+            textTransform: "capitalize",
+            backgroundColor: player.stats.storageBay ? "darkred" : "green",
+            color: player.stats.storageBay ? "white" : "white",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.storageBay = !player.stats.storageBay;
+            updatePlayer(playerGet);
+          }}
+        >
+          {!player.stats.storageBay ? "Online" : "Offline"}
+        </button>
+        <span className="outline" style={{ width: bayTextWidth, fontSize: 11 }}>
+          Arnament Bay:
+        </span>
+        <button
+          className="button"
+          style={{
+            fontSize: 10,
+            width: 38,
+            marginRight: 8,
+            textTransform: "capitalize",
+            backgroundColor: player.stats.arnamentBay ? "darkred" : "green",
+            color: player.stats.arnamentBay ? "white" : "white",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.arnamentBay = !player.stats.arnamentBay;
+            updatePlayer(playerGet);
+          }}
+        >
+          {!player.stats.arnamentBay ? "Online" : "Offline"}
+        </button>
+      </div>
+    );
+  };
+
+  const renderBay3 = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          paddingLeft: 15,
+          paddingRight: 15,
+          paddingTop: 5,
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span className="outline" style={{ width: bayTextWidth, fontSize: 11 }}>
+          Crafting Bay:
+        </span>
+        <button
+          className="button"
+          style={{
+            fontSize: 10,
+            width: 38,
+            marginRight: 8,
+            textTransform: "capitalize",
+            backgroundColor: player.stats.craftingBay ? "darkred" : "green",
+            color: player.stats.craftingBay ? "white" : "white",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.craftingBay = !player.stats.craftingBay;
+            updatePlayer(playerGet);
+          }}
+        >
+          {!player.stats.craftingBay ? "Online" : "Offline"}
+        </button>
+
+        <span className="outline" style={{ width: bayTextWidth, fontSize: 11 }}>
+          Trading Bay:
+        </span>
+        <button
+          className="button"
+          style={{
+            fontSize: 10,
+            width: 38,
+            marginRight: 8,
+            textTransform: "capitalize",
+            backgroundColor: player.stats.tradingBay ? "darkred" : "green",
+            color: player.stats.tradingBay ? "white" : "white",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.tradingBay = !player.stats.tradingBay;
+            updatePlayer(playerGet);
+          }}
+        >
+          {!player.stats.tradingBay ? "Online" : "Offline"}
+        </button>
+      </div>
+    );
+  };
+
+  const renderBay4 = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          paddingLeft: 15,
+          paddingRight: 15,
+          paddingTop: 5,
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span className="outline" style={{ width: bayTextWidth, fontSize: 11 }}>
+          Med Bay:
+        </span>
+        <button
+          className="button"
+          style={{
+            fontSize: 10,
+            width: 38,
+            marginRight: 8,
+            textTransform: "capitalize",
+            backgroundColor: player.stats.medBay ? "darkred" : "green",
+            color: player.stats.medBay ? "white" : "white",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.medBay = !player.stats.medBay;
+            updatePlayer(playerGet);
+          }}
+        >
+          {!player.stats.medBay ? "Online" : "Offline"}
+        </button>
+
+        <span className="outline" style={{ width: bayTextWidth, fontSize: 11 }}>
+          Pilot Bay:
+        </span>
+        <button
+          className="button"
+          style={{
+            fontSize: 10,
+            width: 38,
+            marginRight: 8,
+            textTransform: "capitalize",
+            backgroundColor: player.stats.pilotBay ? "darkred" : "green",
+            color: player.stats.pilotBay ? "white" : "white",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.pilotBay = !player.stats.pilotBay;
+            updatePlayer(playerGet);
+          }}
+        >
+          {!player.stats.pilotBay ? "Online" : "Offline"}
+        </button>
+      </div>
+    );
+  };
+
+  const renderBay5 = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          paddingLeft: 15,
+          paddingRight: 15,
+          paddingTop: 5,
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span className="outline" style={{ width: bayTextWidth, fontSize: 11 }}>
+          Armory:
+        </span>
+        <button
+          className="button"
+          style={{
+            fontSize: 10,
+            width: 38,
+            marginRight: 8,
+            textTransform: "capitalize",
+            backgroundColor: player.stats.armory ? "darkred" : "green",
+            color: player.stats.armory ? "white" : "white",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.armory = !player.stats.armory;
+            updatePlayer(playerGet);
+          }}
+        >
+          {!player.stats.armory ? "Online" : "Offline"}
+        </button>
+        <span className="outline" style={{ width: bayTextWidth, fontSize: 11 }}>
+          Cantina:
+        </span>
+        <button
+          className="button"
+          style={{
+            fontSize: 10,
+            width: 38,
+            marginRight: 8,
+            textTransform: "capitalize",
+            backgroundColor: player.stats.catina ? "darkred" : "green",
+            color: player.stats.catina ? "white" : "white",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.catina = !player.stats.catina;
+            updatePlayer(playerGet);
+          }}
+        >
+          {!player.stats.catina ? "Online" : "Offline"}
+        </button>
+      </div>
+    );
+  };
+
+  const renderSection = () => {
     return (
       <div
         className="scrollable-container"
@@ -2070,10 +2465,177 @@ function App() {
             {renderDetails()}
             {renderDetails2()}
             {renderDetails3()}
-            {renderDetails4()}
+            {renderScraps()}
           </div>
         </div>
 
+        <div style={{ marginLeft: 15, marginRight: 15, marginTop: 10 }}>
+          <hr></hr>
+          {renderCategory()}
+        </div>
+      </div>
+    );
+  };
+
+  const renderCrawlerSection = () => {
+    return (
+      <div
+        className="scrollable-container"
+        style={{
+          overflow: "scroll",
+          height: 480,
+          marginTop: 10,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div
+            style={{
+              marginLeft: 15,
+              width: 150,
+              height: 150,
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  textAlign: "center",
+                  position: "relative",
+                  backgroundImage: `url(${player.details.avatar})`,
+                  minWidth: 150,
+                  height: 150,
+                  marginLeft: 20,
+                  backgroundSize: "cover",
+                }}
+              >
+                {!player.details.avatar && (
+                  <div
+                    className="outline"
+                    style={{ width: 100, color: "orange" }}
+                  >
+                    Select a token and press change to add an avatar to your
+                    sheet
+                  </div>
+                )}
+                <button
+                  className="button"
+                  style={{
+                    width: 50,
+                    padding: 0,
+                    height: 15,
+                    fontSize: 8,
+                    position: "absolute",
+                    left: 50,
+                    bottom: -3,
+                  }}
+                  onClick={async () => {
+                    const selected = await OBR.player.getSelection();
+                    if (selected && selected[0]) {
+                      const items = await OBR.scene.items.getItems([
+                        selected[0],
+                      ]);
+                      const playerGet = { ...player };
+                      if (items[0].image && items[0].image.url) {
+                        playerGet.details.avatar = items[0].image.url;
+                        updatePlayer(playerGet);
+                      }
+                    }
+                  }}
+                >
+                  Change
+                </button>
+              </div>
+            </div>
+          </div>
+          <div style={{ width: 280 }}>
+            {renderBay1()}
+            {renderBay2()}
+            {renderBay3()}
+            {renderBay4()}
+            {renderBay5()}
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 20,
+            alignItems: "center",
+          }}
+        >
+          <span className="dice-result">Max SP:</span>
+          <input
+            className="input-stat"
+            type="number"
+            style={{
+              width: 30,
+              color: "orange",
+            }}
+            value={player.details.techLevel}
+            onChange={(evt) => {
+              const playerGet = { ...player };
+              playerGet.details.techLevel = evt.target.value;
+              updatePlayer(playerGet);
+            }}
+          />
+
+          <span className="dice-result">Tech Level:</span>
+          <input
+            className="input-stat"
+            type="number"
+            style={{
+              width: 30,
+              color: "red",
+            }}
+            value={player.details.techLevel}
+            onChange={(evt) => {
+              const playerGet = { ...player };
+              playerGet.details.techLevel = evt.target.value;
+              updatePlayer(playerGet);
+            }}
+          />
+
+          <span className="dice-result">Upkeep:</span>
+          <input
+            className="input-stat"
+            type="number"
+            style={{
+              width: 30,
+              color: "cyan",
+            }}
+            value={player.details.upkeep}
+            onChange={(evt) => {
+              const playerGet = { ...player };
+              playerGet.details.upkeep = evt.target.value;
+              updatePlayer(playerGet);
+            }}
+          />
+
+          <span className="dice-result">Upgrade:</span>
+          <input
+            className="input-stat"
+            type="number"
+            style={{
+              width: 30,
+              color: "violet",
+            }}
+            value={player.details.upgrade}
+            onChange={(evt) => {
+              const playerGet = { ...player };
+              playerGet.details.upgrade = evt.target.value;
+              updatePlayer(playerGet);
+            }}
+          />
+        </div>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          {renderScraps()}
+        </div>
         <div style={{ marginLeft: 15, marginRight: 15, marginTop: 10 }}>
           <hr></hr>
           {renderCategory()}
@@ -2092,8 +2654,10 @@ function App() {
       }}
     >
       {tab === "playerList" && renderPlayerList()}
-      {tab === "player" && renderInfo()}
-      {tab === "player" && renderAbilities()}
+      {tab === "player" && !player.isCrawler && renderInfo()}
+      {tab === "player" && player.isCrawler && renderCrawlerInfo()}
+      {tab === "player" && !player.isCrawler && renderSection()}
+      {tab === "player" && player.isCrawler && renderCrawlerSection()}
     </div>
   );
 }
