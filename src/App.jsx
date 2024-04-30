@@ -33,6 +33,12 @@ const SALVAGER = (isGM) => {
       SP: 0,
       EP: 0,
       HT: 0,
+      T1: 0,
+      T2: 0,
+      T3: 0,
+      T4: 0,
+      T5: 0,
+      T6: 0,
     },
     abilities: [],
     mechs: [],
@@ -308,6 +314,24 @@ function App() {
               updatePlayer(playerGet);
             }}
           />
+          <button
+            className="button"
+            style={{ width: 25, marginRight: 4 }}
+            onClick={() => {
+              sortCategoryItemUp(index, itemIndex);
+            }}
+          >
+            ↑
+          </button>
+          <button
+            className="button"
+            style={{ width: 25, marginRight: 4 }}
+            onClick={() => {
+              sortCategoryItemDown(index, itemIndex);
+            }}
+          >
+            ↓
+          </button>
           <button
             className="button"
             style={{ marginRight: 4 }}
@@ -600,6 +624,28 @@ function App() {
       const skillTwo = playerGet.abilities[index + 1];
       playerGet.abilities[index] = skillTwo;
       playerGet.abilities[index + 1] = skillOne;
+      updatePlayer(playerGet);
+    }
+  };
+
+  const sortCategoryItemUp = (index, itemIndex) => {
+    if (itemIndex !== 0) {
+      const playerGet = { ...player };
+      const skillOne = playerGet.abilities[index].items[itemIndex];
+      const skillTwo = playerGet.abilities[index].items[itemIndex - 1];
+      playerGet.abilities[index].items[itemIndex] = skillTwo;
+      playerGet.abilities[index].items[itemIndex - 1] = skillOne;
+      updatePlayer(playerGet);
+    }
+  };
+
+  const sortCategoryItemDown = (index, itemIndex) => {
+    if (itemIndex < player.abilities[index].items.length - 1) {
+      const playerGet = { ...player };
+      const skillOne = playerGet.abilities[index].items[itemIndex];
+      const skillTwo = playerGet.abilities[index].items[itemIndex + 1];
+      playerGet.abilities[index].items[itemIndex] = skillTwo;
+      playerGet.abilities[index].items[itemIndex + 1] = skillOne;
       updatePlayer(playerGet);
     }
   };
@@ -1663,6 +1709,116 @@ function App() {
     );
   };
 
+  const renderDetails4 = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          paddingLeft: 15,
+          paddingRight: 15,
+          paddingTop: 5,
+          alignItems: "center",
+        }}
+      >
+        <span className="dice-result" style={{ marginRight: 24.5 }}>
+          Scraps
+        </span>
+        <span className="dice-result">T1:</span>
+        <input
+          className="input-stat"
+          type="number"
+          style={{
+            width: 20,
+            color: "violet",
+          }}
+          value={player.stats.T1}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.scrap.T1 = evt.target.value;
+            updatePlayer(playerGet);
+          }}
+        />
+        <span className="dice-result">T2:</span>
+        <input
+          className="input-stat"
+          type="number"
+          style={{
+            width: 20,
+            color: "violet",
+          }}
+          value={player.stats.T2}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.scrap.T2 = evt.target.value;
+            updatePlayer(playerGet);
+          }}
+        />
+
+        <span className="dice-result">T3:</span>
+        <input
+          className="input-stat"
+          type="number"
+          style={{
+            width: 20,
+            color: "violet",
+          }}
+          value={player.stats.T3}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.scrap.T3 = evt.target.value;
+            updatePlayer(playerGet);
+          }}
+        />
+        <span className="dice-result">T4:</span>
+        <input
+          className="input-stat"
+          type="number"
+          style={{
+            width: 20,
+            color: "violet",
+          }}
+          value={player.stats.T4}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.scrap.T4 = evt.target.value;
+            updatePlayer(playerGet);
+          }}
+        />
+        <span className="dice-result">T5:</span>
+        <input
+          className="input-stat"
+          type="number"
+          style={{
+            width: 20,
+            color: "yellow",
+          }}
+          value={player.stats.T5}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.scrap.T5 = evt.target.value;
+            updatePlayer(playerGet);
+          }}
+        />
+        <span className="dice-result">T6:</span>
+        <input
+          className="input-stat"
+          type="number"
+          style={{
+            width: 20,
+            color: "violet",
+          }}
+          value={player.stats.T6}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.scrap.T6 = evt.target.value;
+            updatePlayer(playerGet);
+          }}
+        />
+      </div>
+    );
+  };
+
   const renderAbilities = () => {
     return (
       <div
@@ -1739,6 +1895,7 @@ function App() {
             {renderDetails()}
             {renderDetails2()}
             {renderDetails3()}
+            {renderDetails4()}
           </div>
         </div>
 
