@@ -167,14 +167,6 @@ function App() {
     }
   };
 
-  function download(content, fileName, contentType) {
-    var a = document.createElement("a");
-    var file = new Blob([content], { type: contentType });
-    a.href = URL.createObjectURL(file);
-    a.download = fileName;
-    a.click();
-  }
-
   useEffect(() => {
     OBR.onReady(async () => {
       OBR.scene.onReadyChange(async (ready) => {
@@ -183,11 +175,7 @@ function App() {
 
           if (metadata["salvage.union.character/metadata"]) {
             const playerListGet = await createPlayerList(metadata);
-            // download(
-            //   JSON.stringify(playerListGet),
-            //   "salvage-union.txt",
-            //   "text/plain"
-            // );
+
             setPlayerList(playerListGet);
           }
 
@@ -2515,6 +2503,7 @@ function App() {
           overflow: "scroll",
           height: 480,
           marginTop: 10,
+          paddingBottom: 20,
         }}
       >
         <div
