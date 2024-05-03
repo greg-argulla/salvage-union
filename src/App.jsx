@@ -2487,7 +2487,14 @@ function App() {
           </div>
         </div>
 
-        <div style={{ marginLeft: 15, marginRight: 15, marginTop: 10 }}>
+        <div
+          style={{
+            marginLeft: 15,
+            marginRight: 15,
+            marginTop: 10,
+            paddingBottom: 20,
+          }}
+        >
           <hr></hr>
           {renderCategory()}
         </div>
