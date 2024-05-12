@@ -330,10 +330,6 @@ function App() {
     return str.substring(str.indexOf("<") + 1, str.lastIndexOf(">"));
   };
 
-  const getSFX = (str) => {
-    return str.substring(str.indexOf("$") + 1, str.lastIndexOf("$"));
-  };
-
   const ability = (data, index, itemIndex) => {
     return (
       <div key={itemIndex}>
@@ -1129,14 +1125,9 @@ function App() {
   const abilityInstance = (data, index, itemIndex, isMech) => {
     let propsString = JSON.stringify(data);
     const imageURL = getImage(propsString);
-    const sfxURL = getSFX(propsString);
 
     if (imageURL) {
       propsString = propsString.replace("<" + imageURL + ">", "");
-    }
-
-    if (sfxURL) {
-      propsString = propsString.replace("$" + sfxURL + "$", " ♫ ");
     }
 
     const item = JSON.parse(propsString);
