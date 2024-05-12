@@ -248,6 +248,25 @@ function App() {
     });
   };
 
+  const sendRandomPart = (ability) => {
+    const skillData = {
+      skillName:
+        (ability.name ? ability.name : "Blank Item") +
+        " is damaged or destroyed!",
+      info: "Your mech has been damaged.",
+      detail:
+        "It will need to be repaired or replaced. Please set the part to offline if its damaged, or deleted if its destroyed.",
+      characterName: player.details.callsign,
+      userId: id,
+      username: name,
+      characterID: player.id,
+      id: Date.now(),
+    };
+    OBR.room.setMetadata({
+      "salvage.union.character/sendskill": skillData,
+    });
+  };
+
   const addAbility = (index, isMech) => {
     const playerGet = { ...player };
     playerGet.abilities[index].items.push({
@@ -632,6 +651,17 @@ function App() {
                     readOnly
                   />
                 </div>
+                <div>
+                  <button
+                    className="button"
+                    style={{ width: 180, marginRight: 4, marginTop: 8 }}
+                    onClick={() => {
+                      sendRandomPart(items[getRandomNumber(items.length)]);
+                    }}
+                  >
+                    Damage / Destroy Random Part
+                  </button>
+                </div>
               </>
             )}
             {items.map((item, itemIndex) => {
@@ -641,6 +671,10 @@ function App() {
         )}
       </div>
     );
+  };
+
+  const getRandomNumber = (max) => {
+    return Math.floor(Math.random() * max);
   };
 
   const sortCategoryUp = (index) => {
@@ -2602,7 +2636,7 @@ function App() {
               width: 30,
               color: "orange",
             }}
-            value={player.details.techLevel}
+            value={player.details.maxSP}
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.details.techLevel = evt.target.value;
