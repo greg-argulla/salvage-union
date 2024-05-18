@@ -2639,7 +2639,7 @@ function App() {
             value={player.details.maxSP}
             onChange={(evt) => {
               const playerGet = { ...player };
-              playerGet.details.techLevel = evt.target.value;
+              playerGet.details.maxSP = evt.target.value;
               updatePlayer(playerGet);
             }}
           />
