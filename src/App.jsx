@@ -39,6 +39,12 @@ const SALVAGER = (isGM) => {
       T4: 0,
       T5: 0,
       T6: 0,
+      linkedHP: "",
+      linkedAP: "",
+      linkedSP: "",
+      linkedEP: "",
+      linkedHT: "",
+      equipMech: "",
     },
     abilities: [],
     mechs: [],
@@ -278,6 +284,13 @@ function App() {
       updatePlayer(playerGet);
   };
 
+  const getEquipMech = () => {
+    const mechFound = player.abilities.find(
+      (item) => player.stats.equipMech === item.id
+    );
+    return mechFound;
+  };
+
   const removeAbility = (index, itemIndex) => {
     if (confirm("Are you sure you want to delete the ability?") == true) {
       const playerGet = { ...player };
@@ -328,6 +341,18 @@ function App() {
 
   const getImage = (str) => {
     return str.substring(str.indexOf("<") + 1, str.lastIndexOf(">"));
+  };
+
+  const updateNoteItem = async (id, value, max, label) => {
+    if (id === "" || !id) return;
+    const valueGet = isNaN(value) ? 0 : value;
+    const maxGet = isNaN(max) ? 0 : max;
+    await OBR.scene.items.updateItems([id], (images) => {
+      for (let image of images) {
+        image.text.richText[0].children[0].text =
+          label + valueGet.toString() + (maxGet ? "/" + maxGet : "");
+      }
+    });
   };
 
   const ability = (data, index, itemIndex) => {
@@ -651,7 +676,39 @@ function App() {
                     readOnly
                   />
                 </div>
-                <div>
+                <div style={{ display: "flex" }}>
+                  <button
+                    className="button"
+                    style={{
+                      width: 90,
+                      marginRight: "auto",
+                      marginTop: 8,
+                      backgroundColor:
+                        player.stats.equipMech === player.abilities[index].id
+                          ? "darkred"
+                          : "#222",
+                      color:
+                        player.stats.equipMech === player.abilities[index].id
+                          ? "white"
+                          : "#ffd433",
+                    }}
+                    onClick={() => {
+                      const playerGet = { ...player };
+                      if (
+                        player.stats.equipMech !== player.abilities[index].id
+                      ) {
+                        playerGet.stats.equipMech = player.abilities[index].id;
+                      } else {
+                        playerGet.stats.equipMech = "";
+                      }
+                      updatePlayer(playerGet);
+                    }}
+                  >
+                    {player.stats.equipMech !== player.abilities[index].id
+                      ? "Equip Mech"
+                      : "Mech Equipped"}
+                  </button>
+
                   <button
                     className="button"
                     style={{ width: 180, marginRight: 4, marginTop: 8 }}
@@ -1034,6 +1091,7 @@ function App() {
   const [searchAbilities, setSearchAbilities] = useState("");
 
   const [collapseAll, setCollapseAll] = useState(true);
+  const [linking, setLinking] = useState(false);
 
   const renderCategory = () => {
     return (
@@ -1043,7 +1101,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 150,
+              width: 100,
               color: "lightgrey",
             }}
             value={searchAbilities}
@@ -1109,7 +1167,33 @@ function App() {
           >
             Add Category
           </button>
+          <button
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 60,
+              float: "right",
+              marginTop: 2,
+              marginLeft: 4,
+              marginRight: 4,
+            }}
+            onClick={() => {
+              setLinking(!linking);
+            }}
+          >
+            {!linking ? "Link" : "Close Link"}
+          </button>
         </div>
+        {linking && (
+          <div>
+            <hr></hr>
+            {linkItem("HP: ", "linkedHP")}
+            {linkItem("AP: ", "linkedAP")}
+            {linkItem("SP: ", "linkedSP")}
+            {linkItem("EP: ", "linkedEP")}
+            {linkItem("HT: ", "linkedHT")}
+          </div>
+        )}
 
         {player.abilities.map((item, index) => {
           if (!item.edit) {
@@ -1630,6 +1714,101 @@ function App() {
     );
   };
 
+  const linkItem = (label, stat) => {
+    return (
+      <div>
+        <span
+          className="outline"
+          style={{ display: "inline-block", width: 80 }}
+        >
+          {label}
+        </span>
+        <input
+          className="input-stat"
+          style={{
+            width: 200,
+            color: "white",
+          }}
+          value={player.stats[stat]}
+          readOnly={true}
+        />
+        <button
+          className="button"
+          style={{
+            width: 96,
+            padding: 5,
+            marginRight: 4,
+            marginLeft: "auto",
+          }}
+          onClick={async () => {
+            const selected = await OBR.player.getSelection();
+            if (selected && selected[0]) {
+              const playerGet = { ...player };
+              playerGet.stats[stat] = selected[0];
+
+              if (stat === "linkedHP") {
+                updateNoteItem(
+                  playerGet.stats.linkedHP,
+                  playerGet.stats.HP,
+                  playerGet.stats.maxHP,
+                  "HP: "
+                );
+              } else if (stat === "linkedAP") {
+                updateNoteItem(
+                  playerGet.stats.linkedHP,
+                  playerGet.stats.AP,
+                  playerGet.stats.maxAP,
+                  "HP: "
+                );
+              } else if (stat === "linkedSP") {
+                updateNoteItem(
+                  playerGet.stats.linkedSP,
+                  playerGet.stats.SP,
+                  playerGet.stats.maxSP,
+                  "HP: "
+                );
+              } else if (stat === "linkedEP") {
+                updateNoteItem(
+                  playerGet.stats.linkedEP,
+                  playerGet.stats.EP,
+                  playerGet.stats.maxEP,
+                  "HP: "
+                );
+              } else if (stat === "linkedHT") {
+                updateNoteItem(
+                  playerGet.stats.linkedHT,
+                  playerGet.stats.HT,
+                  playerGet.stats.maxHT,
+                  "HP: "
+                );
+              }
+              updatePlayer(playerGet);
+            }
+          }}
+        >
+          Link Selected Item
+        </button>
+
+        <button
+          className="button"
+          style={{
+            width: 50,
+            padding: 5,
+            marginRight: 4,
+            marginLeft: "auto",
+          }}
+          onClick={async () => {
+            const playerGet = { ...player };
+            playerGet.stats[stat] = "";
+            updatePlayer(playerGet);
+          }}
+        >
+          Clear
+        </button>
+      </div>
+    );
+  };
+
   const renderInfo = () => {
     return (
       <div
@@ -1670,6 +1849,13 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.HP = evt.target.value;
+
+            updateNoteItem(
+              playerGet.stats.linkedHP,
+              playerGet.stats.HP,
+              playerGet.stats.maxHP,
+              "HP: "
+            );
             updatePlayer(playerGet);
           }}
         />
@@ -1685,6 +1871,13 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.AP = evt.target.value;
+
+            updateNoteItem(
+              playerGet.stats.linkedAP,
+              playerGet.stats.AP,
+              playerGet.stats.maxAP,
+              "AP: "
+            );
             updatePlayer(playerGet);
           }}
         />
@@ -1700,6 +1893,15 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.SP = evt.target.value;
+
+            const mech = getEquipMech();
+
+            updateNoteItem(
+              playerGet.stats.linkedSP,
+              playerGet.stats.SP,
+              mech.stats.structure,
+              "SP: "
+            );
             updatePlayer(playerGet);
           }}
         />
@@ -1715,6 +1917,15 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.EP = evt.target.value;
+
+            const mech = getEquipMech();
+
+            updateNoteItem(
+              playerGet.stats.linkedEP,
+              playerGet.stats.EP,
+              mech.stats.energy,
+              "EP: "
+            );
             updatePlayer(playerGet);
           }}
         />
@@ -1730,6 +1941,15 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.HT = evt.target.value;
+
+            const mech = getEquipMech();
+
+            updateNoteItem(
+              playerGet.stats.linkedHT,
+              playerGet.stats.HT,
+              mech.stats.heatCap,
+              "HT: "
+            );
             updatePlayer(playerGet);
           }}
         />
