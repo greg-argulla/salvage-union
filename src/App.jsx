@@ -701,6 +701,30 @@ function App() {
                       } else {
                         playerGet.stats.equipMech = "";
                       }
+
+                      const mech = getEquipMech();
+
+                      updateNoteItem(
+                        playerGet.stats.linkedSP,
+                        playerGet.stats.SP,
+                        mech ? mech.stats.structure : undefined,
+                        "SP: "
+                      );
+
+                      updateNoteItem(
+                        playerGet.stats.linkedEP,
+                        playerGet.stats.EP,
+                        mech ? mech.stats.energy : undefined,
+                        "EP: "
+                      );
+
+                      updateNoteItem(
+                        playerGet.stats.linkedHT,
+                        playerGet.stats.HT,
+                        mech ? mech.stats.heatCap : undefined,
+                        "HT: "
+                      );
+
                       updatePlayer(playerGet);
                     }}
                   >
@@ -1899,7 +1923,7 @@ function App() {
             updateNoteItem(
               playerGet.stats.linkedSP,
               playerGet.stats.SP,
-              mech.stats.structure,
+              mech ? mech.stats.structure : undefined,
               "SP: "
             );
             updatePlayer(playerGet);
@@ -1923,7 +1947,7 @@ function App() {
             updateNoteItem(
               playerGet.stats.linkedEP,
               playerGet.stats.EP,
-              mech.stats.energy,
+              mech ? mech.stats.energy : undefined,
               "EP: "
             );
             updatePlayer(playerGet);
@@ -1947,7 +1971,7 @@ function App() {
             updateNoteItem(
               playerGet.stats.linkedHT,
               playerGet.stats.HT,
-              mech.stats.heatCap,
+              mech ? mech.stats.heatCap : undefined,
               "HT: "
             );
             updatePlayer(playerGet);
