@@ -1769,6 +1769,7 @@ function App() {
             if (selected && selected[0]) {
               const playerGet = { ...player };
               playerGet.stats[stat] = selected[0];
+              const mech = getEquipMech();
 
               if (stat === "linkedHP") {
                 updateNoteItem(
@@ -1779,31 +1780,31 @@ function App() {
                 );
               } else if (stat === "linkedAP") {
                 updateNoteItem(
-                  playerGet.stats.linkedHP,
+                  playerGet.stats.linkedAP,
                   playerGet.stats.AP,
                   playerGet.stats.maxAP,
-                  "HP: "
+                  "AP: "
                 );
               } else if (stat === "linkedSP") {
                 updateNoteItem(
                   playerGet.stats.linkedSP,
                   playerGet.stats.SP,
-                  playerGet.stats.maxSP,
-                  "HP: "
+                  mech ? mech.stats.structure : undefined,
+                  "SP: "
                 );
               } else if (stat === "linkedEP") {
                 updateNoteItem(
                   playerGet.stats.linkedEP,
                   playerGet.stats.EP,
-                  playerGet.stats.maxEP,
-                  "HP: "
+                  mech ? mech.stats.energy : undefined,
+                  "EP: "
                 );
               } else if (stat === "linkedHT") {
                 updateNoteItem(
                   playerGet.stats.linkedHT,
                   playerGet.stats.HT,
-                  playerGet.stats.maxHT,
-                  "HP: "
+                  mech ? mech.stats.heatCap : undefined,
+                  "HT: "
                 );
               }
               updatePlayer(playerGet);
@@ -2135,6 +2136,13 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.maxHP = evt.target.value;
+
+            updateNoteItem(
+              playerGet.stats.linkedHP,
+              playerGet.stats.HP,
+              playerGet.stats.maxHP,
+              "HP: "
+            );
             updatePlayer(playerGet);
           }}
         />
@@ -2203,6 +2211,13 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.maxAP = evt.target.value;
+
+            updateNoteItem(
+              playerGet.stats.linkedAP,
+              playerGet.stats.AP,
+              playerGet.stats.maxAP,
+              "AP: "
+            );
             updatePlayer(playerGet);
           }}
         />
@@ -2268,6 +2283,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.TP = evt.target.value;
+
             updatePlayer(playerGet);
           }}
         />
